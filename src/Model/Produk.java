@@ -1,13 +1,31 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model;
+public class Produk {
 
-/**
- *
- * @author Advan
- */
-public class Product {
+    private int id;
+    private String nama;
+    private Double harga;
+    
+    public Produk(int id, String nama, Double harga){
+        this.id = id;
+        this.nama = nama;
+        this.harga = harga;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public Double getHarga() {
+        return harga;
+    }
+    
+//    @override
+//    public String toString(){
+//        return name + " - Rp" + price;
+//    }
     
 }
