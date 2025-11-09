@@ -1,13 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
-/**
- *
- * @author Advan
- */
+import java.time.LocalDate;
+import java.time.DayOfWeek;
+
 public class DiscountedRuleDao {
+    int today = LocalDate.now().getDayOfMonth();
+    double fixPrice;
     
+    public void Diskon(double totalHarga){
+        if(today == 10){
+            fixPrice = (totalHarga * 0.5) * 0.1 ;
+        }
+    }
 }

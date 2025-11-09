@@ -7,8 +7,10 @@
             <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/dao/DiscountedRuleDao.java</file>
             <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/Database/DatabaseConnection.java</file>
             <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/ui/MainGUI.java</file>
-            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/Model/Product.java</file>
-            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/Model/QTY.java</file>
+            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/Model/Produk.java</file>
+            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/Model/Pelanggan.java</file>
+            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/dao/Tester.java</file>
+            <file>file:/C:/Users/Advan/OneDrive/Documents/NetBeansProjects/TR-PBO/src/dao/PelangganDao.java</file>
         </group>
     </open-files>
 </project-private>
