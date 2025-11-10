@@ -34,8 +34,14 @@ CREATE TABLE detail_transaksi (
 CREATE TABLE diskon(
 	id int AUTO_INCREMENT PRIMARY KEY,
     nama varchar(50),
-    persen double NOT NULL,
+    persen1 double NOT NULL,
+    persen2 double NOT NULL,
     hari int NOT null
 );
+
+INSERT INTO diskon (nama, persen1, persen2, hari) VALUES
+('Diskon Akhir Pekan', 50, 10, 6),
+('Diskon Pertengahan Minggu', 50, 10, 2),
+('Diskon Spesial', 50, 10, 5);
 
 

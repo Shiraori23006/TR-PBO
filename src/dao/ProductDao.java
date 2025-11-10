@@ -1,67 +1,92 @@
 package dao;
 
 import Database.DatabaseConnection;
+import Model.Produk;
 import java.sql.*;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductDao {
-    Scanner input = new Scanner(System.in);
 
-    public void insertProduk(String nama, double harga) {
-        String sql = "INSERT INTO produk (nama, price) VALUES (?, ?)";
+    // Tambah produk baru ke database
+    public void insertProduk(Produk p) {
+        String sql = "INSERT INTO produk (nama, price, stock) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.GetConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nama);
-            stmt.setDouble(2, harga);
+            
+            stmt.setString(1, p.getNama());
+            stmt.setDouble(2, p.getHarga());
+            stmt.setInt(3, p.getStok());
             stmt.executeUpdate();
-            System.out.println("Produk berhasil ditambahkan");
+
         } catch (SQLException e) {
             System.out.println("Gagal tambah produk: " + e.getMessage());
         }
     }
+    
+    public void deleteProduk(int id){
+        String sql = "DELETE FROM produk WHERE id=?";
+        try(Connection conn = DatabaseConnection.GetConnection();){
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Produk Berhasil dihapus");
+            }else{
+                System.out.println("Film dengan id " + id + " Tidak Terhapus");
+            }
+        }
+        catch(SQLException e){
+            System.out.println("Gagal Menghapus Produk " + e.getMessage());
+        }
+    }
+    
+    public void updateProduk (Produk p){
+        String sql = "UPDATE produk SET nama = ?, price = ?, stock = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.GetConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-    public void tampilkanSemuaProduk() {
+            stmt.setString(1, p.getNama());
+            stmt.setDouble(2, p.getHarga());
+            stmt.setInt(3, p.getStok());
+            stmt.setInt(4, p.getId());
+
+            int rows = stmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Produk berhasil diperbarui (ID: " + p.getId() + ")");
+            } else {
+                System.out.println("Produk tidak ditemukan untuk diupdate!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Gagal update produk: " + e.getMessage());
+        }
+    }
+
+    // Ambil semua produk dari database
+    public List<Produk> tampilkanSemuaProduk() {
+        List<Produk> list = new ArrayList<>();
         String sql = "SELECT * FROM produk";
+
         try (Connection conn = DatabaseConnection.GetConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                System.out.println(
-                    rs.getInt("id") + " | " +
-                    rs.getString("nama") + " | Rp" +
-                    rs.getDouble("price")
-                );
+                Produk p = new Produk();
+                p.setId(rs.getInt("id"));
+                p.setNama(rs.getString("nama"));
+                p.setHarga(rs.getDouble("price"));
+                p.setStok(rs.getInt("stock"));
+                list.add(p);
             }
 
         } catch (SQLException e) {
             System.out.println("Gagal ambil data: " + e.getMessage());
         }
-    }
 
-    public void tampilkanProdukById() {
-        System.out.print("Masukkan ID produk: ");
-        int id = input.nextInt();
-
-        String sql = "SELECT * FROM produk WHERE id = ?";
-        try (Connection conn = DatabaseConnection.GetConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                System.out.println(
-                    rs.getInt("id") + " | " +
-                    rs.getString("nama") + " | Rp" +
-                    rs.getDouble("price")
-                );
-            } else {
-                System.out.println("Produk dengan ID tersebut tidak ditemukan.");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Gagal ambil data: " + e.getMessage());
-        }
+        return list;
     }
 }
