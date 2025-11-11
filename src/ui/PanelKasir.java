@@ -5,6 +5,7 @@
 package ui;
 import Model.Diskon;
 import Model.Produk;
+import dao.DiskonDao;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import java.sql.*;
@@ -208,15 +209,15 @@ public class PanelKasir extends javax.swing.JPanel {
     }//GEN-LAST:event_txtQtyActionPerformed
 
     private void loadDiskonHariIni() {
-    dao.DiskonDao diskonDao = new dao.DiskonDao();
-    Diskon diskon = diskonDao.getDiskonHariIni();
+     dao.DiskonDao dao = new dao.DiskonDao();
+    java.util.List<Model.Diskon> list = dao.getSemuaDiskon();
 
-    double totalPersen = diskon.getPersen1() + diskon.getPersen2();
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+        new Object[]{"ID", "Tanggal", "Diskon 1", "Diskon 2"}, 0
+    );
 
-    if (totalPersen <= 0) {
-        lblDiskon.setText("Tidak Ada Diskon Hari Ini");
-    } else {
-        lblDiskon.setText("Diskon Hari Ini: " + totalPersen + "%");
+    for (Model.Diskon d : list) {
+        model.addRow(new Object[]{d.getId(), d.getTanggal(), d.getPersen1(), d.getPersen2()});
     }
 }
 
@@ -258,8 +259,7 @@ public class PanelKasir extends javax.swing.JPanel {
         hitungTotal();
     }//GEN-LAST:event_btnTambahActionPerformed
 
-    private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
-        // TODO add your handling code here:
+    private void bayar(){
         try (Connection conn = Database.DatabaseConnection.GetConnection()) {
         conn.setAutoCommit(false);
 
@@ -271,21 +271,28 @@ public class PanelKasir extends javax.swing.JPanel {
 
         // === CEK DISKON ===
         dao.DiskonDao diskonDao = new dao.DiskonDao();
-        
-        Diskon diskon = diskonDao.getDiskonHariIni();
-        double pot1 = total * (diskon.getPersen1() / 100); // Diskon dari persen1
-        double pot2 = total * (diskon.getPersen2() / 100); // Diskon dari persen2
-        double totalDiskon = pot1 + pot2;
-        double totalSetelahDiskon = total - totalDiskon;
+        List<Diskon> listDiskon = diskonDao.getDiskonHariIni();
 
-        
+        double pot1 = 0;
+        double pot2 = 0;
+        double totalDiskon = 0;
+        double totalSetelahDiskon = total;
+
+        if (listDiskon != null && !listDiskon.isEmpty()) {
+            Diskon diskon = listDiskon.get(0); // ambil diskon pertama
+            pot1 = total * (diskon.getPersen1() / 100);
+            pot2 = total * (diskon.getPersen2() / 100);
+            totalDiskon = pot1 + pot2;
+            totalSetelahDiskon = total - totalDiskon;
+        }
+
+        // === SIMPAN DATA PELANGGAN ===
         String sqlPelanggan = "INSERT INTO pelanggan (nama, no_hp) VALUES (?, ?)";
         PreparedStatement stmtPelanggan = conn.prepareStatement(sqlPelanggan, Statement.RETURN_GENERATED_KEYS);
         stmtPelanggan.setString(1, txtNama.getText());
         stmtPelanggan.setString(2, txtNoHp.getText());
         stmtPelanggan.executeUpdate();
 
-        // Ambil id_pelanggan yang baru saja dibuat
         ResultSet rs = stmtPelanggan.getGeneratedKeys();
         rs.next();
         int idPelanggan = rs.getInt(1);
@@ -318,10 +325,17 @@ public class PanelKasir extends javax.swing.JPanel {
         stmtDetail.executeBatch();
         conn.commit();
 
-        JOptionPane.showMessageDialog(this,
-            "Transaksi berhasil!\n" +
-            "Diskon: " + pot1 + "%" + pot2 + "%" +"\n" +
-            "Total Bayar: Rp " + totalSetelahDiskon);
+        if (listDiskon != null && !listDiskon.isEmpty()) {
+            Diskon diskon = listDiskon.get(0);
+            JOptionPane.showMessageDialog(this,
+                "Transaksi berhasil!\n" +
+                "Diskon: " + diskon.getPersen1() + "% + " + diskon.getPersen2() + "%\n" +
+                "Total Bayar: Rp " + totalSetelahDiskon);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Transaksi berhasil tanpa diskon.\n" +
+                "Total Bayar: Rp " + totalSetelahDiskon);
+        }
 
         modelKeranjang.setRowCount(0);
         lblTotal.setText("Total: Rp 0");
@@ -330,6 +344,10 @@ public class PanelKasir extends javax.swing.JPanel {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
     }
+    }
+    
+    private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
+    bayar();
     }//GEN-LAST:event_btnBayarActionPerformed
 
     private void txtNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaActionPerformed

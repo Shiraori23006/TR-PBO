@@ -40,6 +40,7 @@ public class MainKasirFrame extends javax.swing.JFrame {
         jMenu1 = new javax.swing.JMenu();
         menuProduk = new javax.swing.JMenuItem();
         menuTransaksi = new javax.swing.JMenuItem();
+        panelDiskon = new javax.swing.JMenuItem();
         menuKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -78,6 +79,14 @@ public class MainKasirFrame extends javax.swing.JFrame {
             }
         });
         jMenu1.add(menuTransaksi);
+
+        panelDiskon.setText("Diskon");
+        panelDiskon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelDiskonActionPerformed(evt);
+            }
+        });
+        jMenu1.add(panelDiskon);
 
         menuKeluar.setText("Keluar");
         menuKeluar.addActionListener(new java.awt.event.ActionListener() {
@@ -121,6 +130,11 @@ public class MainKasirFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         showPanel(new PanelKasir());
     }//GEN-LAST:event_menuTransaksiActionPerformed
+
+    private void panelDiskonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_panelDiskonActionPerformed
+        // TODO add your handling code here:
+        showPanel (new PanelDiskon());
+    }//GEN-LAST:event_panelDiskonActionPerformed
     private void showPanel(JPanel panel){
         mainPanel.removeAll();
         mainPanel.setLayout(new BorderLayout());
@@ -163,5 +177,6 @@ public class MainKasirFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuKeluar;
     private javax.swing.JMenuItem menuProduk;
     private javax.swing.JMenuItem menuTransaksi;
+    private javax.swing.JMenuItem panelDiskon;
     // End of variables declaration//GEN-END:variables
 }

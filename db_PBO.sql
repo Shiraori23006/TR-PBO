@@ -31,17 +31,17 @@ CREATE TABLE detail_transaksi (
     FOREIGN KEY (id_produk) REFERENCES produk(id)
 );
 
-CREATE TABLE diskon(
-	id int AUTO_INCREMENT PRIMARY KEY,
-    nama varchar(50),
-    persen1 double NOT NULL,
-    persen2 double NOT NULL,
-    hari int NOT null
+CREATE TABLE diskon (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tanggal DATE NOT NULL,
+    persen DOUBLE DEFAULT 0,
+    persen2 DOUBLE DEFAULT 0
 );
 
-INSERT INTO diskon (nama, persen1, persen2, hari) VALUES
-('Diskon Akhir Pekan', 50, 10, 6),
-('Diskon Pertengahan Minggu', 50, 10, 2),
-('Diskon Spesial', 50, 10, 5);
 
+INSERT INTO diskon (tanggal, persen, persen2)
+VALUES
+('2025-11-11', 10, 5),
+('2025-12-25', 20, 10),
+('2025-01-01', 15, 5);
 
