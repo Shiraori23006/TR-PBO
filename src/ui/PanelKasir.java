@@ -53,17 +53,17 @@ public class PanelKasir extends javax.swing.JPanel {
 
         tabelProduk.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Title 1", "Title 2", "Title 3"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -75,7 +75,6 @@ public class PanelKasir extends javax.swing.JPanel {
             tabelProduk.getColumnModel().getColumn(0).setResizable(false);
             tabelProduk.getColumnModel().getColumn(1).setResizable(false);
             tabelProduk.getColumnModel().getColumn(2).setResizable(false);
-            tabelProduk.getColumnModel().getColumn(3).setResizable(false);
         }
 
         tabelKeranjang.setModel(new javax.swing.table.DefaultTableModel(
@@ -149,18 +148,14 @@ public class PanelKasir extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                                .addComponent(txtQty, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblNama)
-                                    .addComponent(lblNoHP))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtNoHp)
-                                    .addComponent(txtNama))))
+                            .addComponent(lblNama)
+                            .addComponent(lblNoHP)
+                            .addComponent(jLabel1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtQty)
+                            .addComponent(txtNoHp)
+                            .addComponent(txtNama))
                         .addGap(18, 18, 18)
                         .addComponent(btnTambah)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -209,16 +204,32 @@ public class PanelKasir extends javax.swing.JPanel {
     }//GEN-LAST:event_txtQtyActionPerformed
 
     private void loadDiskonHariIni() {
-     dao.DiskonDao dao = new dao.DiskonDao();
-    java.util.List<Model.Diskon> list = dao.getSemuaDiskon();
+//     dao.DiskonDao dao = new dao.DiskonDao();
+//    java.util.List<Model.Diskon> list = dao.getSemuaDiskon();
+//
+//    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
+//        new Object[]{"ID", "Tanggal", "Diskon 1", "Diskon 2"}, 0
+//    );
+//
+//    for (Model.Diskon d : list) {
+//        model.addRow(new Object[]{d.getId(), d.getTanggal(), d.getPersen1(), d.getPersen2()});
+//    }
+    dao.DiskonDao diskonDao = new dao.DiskonDao();
+        List<Diskon> listDiskon = diskonDao.getDiskonHariIni();
 
-    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
-        new Object[]{"ID", "Tanggal", "Diskon 1", "Diskon 2"}, 0
-    );
+        double pot1 = 0;
+        double pot2 = 0;
 
-    for (Model.Diskon d : list) {
-        model.addRow(new Object[]{d.getId(), d.getTanggal(), d.getPersen1(), d.getPersen2()});
-    }
+        if (listDiskon != null && !listDiskon.isEmpty()) {
+            Diskon diskon = listDiskon.get(0); // ambil diskon pertama
+            pot1 = diskon.getPersen1();
+            pot2 = diskon.getPersen2();
+            lblDiskon.setText("Diskon: " + pot1 + "+" + pot2);
+        }else{
+            lblDiskon.setText("Diskon: Tidak ada diskon");    
+        }
+
+
 }
 
     
@@ -253,10 +264,8 @@ public class PanelKasir extends javax.swing.JPanel {
         }catch(NumberFormatException e){
             JOptionPane.showMessageDialog(this, "Masukan Jumlah Yang benar!!!");
         }
-        
-
-        
         hitungTotal();
+        txtQty.setText("");
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void bayar(){
@@ -281,9 +290,13 @@ public class PanelKasir extends javax.swing.JPanel {
         if (listDiskon != null && !listDiskon.isEmpty()) {
             Diskon diskon = listDiskon.get(0); // ambil diskon pertama
             pot1 = total * (diskon.getPersen1() / 100);
-            pot2 = total * (diskon.getPersen2() / 100);
+            pot2 = (total-pot1) * (diskon.getPersen2() / 100);
             totalDiskon = pot1 + pot2;
             totalSetelahDiskon = total - totalDiskon;
+            
+            if (totalSetelahDiskon < 0) {
+                totalSetelahDiskon = 0;
+            }
         }
 
         // === SIMPAN DATA PELANGGAN ===
@@ -348,6 +361,8 @@ public class PanelKasir extends javax.swing.JPanel {
     
     private void btnBayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBayarActionPerformed
     bayar();
+    txtNama.setText("");
+    txtNoHp.setText("");
     }//GEN-LAST:event_btnBayarActionPerformed
 
     private void txtNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaActionPerformed
@@ -378,7 +393,7 @@ public class PanelKasir extends javax.swing.JPanel {
 
     // Buat model tabel
     javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
-        new Object[]{"ID", "Nama", "Harga", "Stok"}, 0
+        new Object[]{"ID", "Nama", "Harga"}, 0
     );
 
     // Isi data produk
@@ -387,7 +402,6 @@ public class PanelKasir extends javax.swing.JPanel {
             p.getId(),
             p.getNama(),
             p.getHarga(),
-            p.getStok()
         });
     }
 

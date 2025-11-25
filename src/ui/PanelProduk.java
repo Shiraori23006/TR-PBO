@@ -37,13 +37,11 @@ public class PanelProduk extends javax.swing.JPanel {
         tabelProduk = new javax.swing.JTable();
         txtProduk = new javax.swing.JTextField();
         txtHargaProduk = new javax.swing.JTextField();
-        txtStokProduk = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
 
         tabelProduk.setModel(new javax.swing.table.DefaultTableModel(
@@ -58,12 +56,6 @@ public class PanelProduk extends javax.swing.JPanel {
             }
         ));
         jScrollPane1.setViewportView(tabelProduk);
-
-        txtStokProduk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtStokProdukActionPerformed(evt);
-            }
-        });
 
         jButton1.setText("Tambah");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -90,8 +82,6 @@ public class PanelProduk extends javax.swing.JPanel {
 
         jLabel2.setText("Harga Produk");
 
-        jLabel3.setText("Stok Produk");
-
         jLabel4.setText("Menambah Produk");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -107,18 +97,15 @@ public class PanelProduk extends javax.swing.JPanel {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtStokProduk, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
-                            .addComponent(txtProduk)
+                            .addComponent(txtProduk, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                             .addComponent(txtHargaProduk))
                         .addGap(42, 42, 42)
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(49, 49, 49)
                         .addComponent(jButton2)
                         .addGap(37, 37, 37)
                         .addComponent(jButton3)
@@ -130,7 +117,6 @@ public class PanelProduk extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -140,18 +126,14 @@ public class PanelProduk extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtHargaProduk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtStokProduk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)))
+                            .addComponent(jLabel2)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
                             .addComponent(jButton2)
                             .addComponent(jButton3))))
-                .addGap(11, 11, 11))
+                .addGap(39, 39, 39))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -159,10 +141,10 @@ public class PanelProduk extends javax.swing.JPanel {
         ProductDao dao = new ProductDao();
         List<Produk> list = dao.tampilkanSemuaProduk();
         DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"ID", "Nama", "Harga", "Stok"},0
+                new Object[]{"ID", "Nama", "Harga"},0
         );
         for (Produk p : list){
-            model.addRow(new Object[]{p.getId(), p.getNama(), p.getHarga(), p.getStok()});
+            model.addRow(new Object[]{p.getId(), p.getNama(), p.getHarga()});
         }
         tabelProduk.setModel(model);
     }
@@ -197,16 +179,15 @@ public class PanelProduk extends javax.swing.JPanel {
         // Ambil input user
         String nama = txtProduk.getText();
         Double harga = Double.parseDouble(txtHargaProduk.getText());
-        int stok = Integer.parseInt(txtStokProduk.getText());
 
-        if (nama.isEmpty() || harga <= 0 || stok < 0) {
+        if (nama.isEmpty() || harga <= 0) {
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "Pastikan nama, harga (>0) dan stok (>=0) valid!");
             return;
         }
 
         // Buat objek Produk
-        Produk p = new Produk(nama, harga, stok);
+        Produk p = new Produk(nama, harga);
 
         // Insert ke database
         ProductDao dao = new ProductDao();
@@ -218,7 +199,6 @@ public class PanelProduk extends javax.swing.JPanel {
         // Bersihkan field input
         txtProduk.setText("");
         txtHargaProduk.setText("");
-        txtStokProduk.setText("");
 
         // Refresh tabel
         loadProduk();
@@ -232,10 +212,6 @@ public class PanelProduk extends javax.swing.JPanel {
             "Gagal menambahkan produk: " + e.getMessage());
     }
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void txtStokProdukActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtStokProdukActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtStokProdukActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -252,19 +228,15 @@ public class PanelProduk extends javax.swing.JPanel {
     int id = (int) tabelProduk.getValueAt(row, 0);
     String namaLama = (String) tabelProduk.getValueAt(row, 1);
     Double hargaLama = (Double) tabelProduk.getValueAt(row, 2);
-    int stokLama = (int) tabelProduk.getValueAt(row, 3);
 
     String namaBaru = JOptionPane.showInputDialog(this, "Nama Produk:", namaLama);
     if(namaBaru == null) return; // batal
     String hargaStr = JOptionPane.showInputDialog(this, "Harga Produk:", hargaLama);
     if(hargaStr == null) return;
-    String stokStr = JOptionPane.showInputDialog(this, "Stok Produk:", stokLama);
-    if(stokStr == null) return;
 
     double hargaBaru = Double.parseDouble(hargaStr);
-    int stokBaru = Integer.parseInt(stokStr);
 
-    Produk p = new Produk(id, namaBaru, hargaBaru, stokBaru);
+    Produk p = new Produk(id, namaBaru, hargaBaru);
     ProductDao dao = new ProductDao();
     dao.updateProduk(p);
 
@@ -278,12 +250,10 @@ public class PanelProduk extends javax.swing.JPanel {
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tabelProduk;
     private javax.swing.JTextField txtHargaProduk;
     private javax.swing.JTextField txtProduk;
-    private javax.swing.JTextField txtStokProduk;
     // End of variables declaration//GEN-END:variables
 }

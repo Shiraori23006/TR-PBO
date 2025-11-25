@@ -10,13 +10,12 @@ public class ProductDao {
 
     // Tambah produk baru ke database
     public void insertProduk(Produk p) {
-        String sql = "INSERT INTO produk (nama, price, stock) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO produk (nama, harga) VALUES (?, ?)";
         try (Connection conn = DatabaseConnection.GetConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, p.getNama());
             stmt.setDouble(2, p.getHarga());
-            stmt.setInt(3, p.getStok());
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -34,7 +33,7 @@ public class ProductDao {
             if (rowsAffected > 0) {
                 System.out.println("Produk Berhasil dihapus");
             }else{
-                System.out.println("Film dengan id " + id + " Tidak Terhapus");
+                System.out.println("Produk dengan id " + id + " Tidak Terhapus");
             }
         }
         catch(SQLException e){
@@ -43,14 +42,13 @@ public class ProductDao {
     }
     
     public void updateProduk (Produk p){
-        String sql = "UPDATE produk SET nama = ?, price = ?, stock = ? WHERE id = ?";
+        String sql = "UPDATE produk SET nama = ?, harga = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.GetConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, p.getNama());
             stmt.setDouble(2, p.getHarga());
-            stmt.setInt(3, p.getStok());
-            stmt.setInt(4, p.getId());
+            stmt.setInt(3, p.getId());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
@@ -78,8 +76,7 @@ public class ProductDao {
                 Produk p = new Produk();
                 p.setId(rs.getInt("id"));
                 p.setNama(rs.getString("nama"));
-                p.setHarga(rs.getDouble("price"));
-                p.setStok(rs.getInt("stock"));
+                p.setHarga(rs.getDouble("harga"));
                 list.add(p);
             }
 
