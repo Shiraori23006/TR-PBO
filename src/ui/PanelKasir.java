@@ -320,8 +320,7 @@ public class PanelKasir extends javax.swing.JPanel {
         }
 
         stmtDetail.executeBatch();
-        conn.commit();
-
+        
         if (diskon != null) {
             JOptionPane.showMessageDialog(this,
             "Transaksi berhasil!\n" +
@@ -336,7 +335,7 @@ public class PanelKasir extends javax.swing.JPanel {
 
         modelKeranjang.setRowCount(0);
         lblTotal.setText("Total: Rp 0");
-
+        conn.commit();
     } catch (SQLException e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal menyimpan transaksi: " + e.getMessage());
@@ -378,9 +377,8 @@ public class PanelKasir extends javax.swing.JPanel {
             p.getHarga(),
         });
     }
-
     tabelProduk.setModel(model);
-}
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
