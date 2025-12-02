@@ -204,33 +204,20 @@ public class PanelKasir extends javax.swing.JPanel {
     }//GEN-LAST:event_txtQtyActionPerformed
 
     private void loadDiskonHariIni() {
-//     dao.DiskonDao dao = new dao.DiskonDao();
-//    java.util.List<Model.Diskon> list = dao.getSemuaDiskon();
-//
-//    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
-//        new Object[]{"ID", "Tanggal", "Diskon 1", "Diskon 2"}, 0
-//    );
-//
-//    for (Model.Diskon d : list) {
-//        model.addRow(new Object[]{d.getId(), d.getTanggal(), d.getPersen1(), d.getPersen2()});
-//    }
-    dao.DiskonDao diskonDao = new dao.DiskonDao();
-        List<Diskon> listDiskon = diskonDao.getDiskonHariIni();
+        dao.DiskonDao diskonDao = new dao.DiskonDao();
+        Diskon diskon = diskonDao.getDiskonHariIni();
 
         double pot1 = 0;
         double pot2 = 0;
 
-        if (listDiskon != null && !listDiskon.isEmpty()) {
-            Diskon diskon = listDiskon.get(0); // ambil diskon pertama
+        if (diskon != null) {
             pot1 = diskon.getPersen1();
             pot2 = diskon.getPersen2();
-            lblDiskon.setText("Diskon: " + pot1 + "+" + pot2);
-        }else{
-            lblDiskon.setText("Diskon: Tidak ada diskon");    
+            lblDiskon.setText("Diskon: " + pot1 + "% + " + pot2 + "%");
+        } else {
+            lblDiskon.setText("Diskon: Tidak ada diskon");
         }
-
-
-}
+    }
 
     
     
@@ -280,24 +267,21 @@ public class PanelKasir extends javax.swing.JPanel {
 
         // === CEK DISKON ===
         dao.DiskonDao diskonDao = new dao.DiskonDao();
-        List<Diskon> listDiskon = diskonDao.getDiskonHariIni();
+        Diskon diskon = diskonDao.getDiskonHariIni();
+
 
         double pot1 = 0;
         double pot2 = 0;
         double totalDiskon = 0;
         double totalSetelahDiskon = total;
 
-        if (listDiskon != null && !listDiskon.isEmpty()) {
-            Diskon diskon = listDiskon.get(0); // ambil diskon pertama
-            pot1 = total * (diskon.getPersen1() / 100);
-            pot2 = (total-pot1) * (diskon.getPersen2() / 100);
-            totalDiskon = pot1 + pot2;
-            totalSetelahDiskon = total - totalDiskon;
-            
-            if (totalSetelahDiskon < 0) {
-                totalSetelahDiskon = 0;
-            }
-        }
+    if (diskon != null) {
+        pot1 = total * (diskon.getPersen1() / 100);
+        pot2 = (total - pot1) * (diskon.getPersen2() / 100);
+        totalDiskon = pot1 + pot2;
+        totalSetelahDiskon = total - totalDiskon;
+    }
+
 
         // === SIMPAN DATA PELANGGAN ===
         String sqlPelanggan = "INSERT INTO pelanggan (nama, no_hp) VALUES (?, ?)";
@@ -338,17 +322,17 @@ public class PanelKasir extends javax.swing.JPanel {
         stmtDetail.executeBatch();
         conn.commit();
 
-        if (listDiskon != null && !listDiskon.isEmpty()) {
-            Diskon diskon = listDiskon.get(0);
+        if (diskon != null) {
             JOptionPane.showMessageDialog(this,
-                "Transaksi berhasil!\n" +
-                "Diskon: " + diskon.getPersen1() + "% + " + diskon.getPersen2() + "%\n" +
-                "Total Bayar: Rp " + totalSetelahDiskon);
+            "Transaksi berhasil!\n" +
+            "Diskon: " + diskon.getPersen1() + "% + " + diskon.getPersen2() + "%\n" +
+            "Total Bayar: Rp " + totalSetelahDiskon);
         } else {
             JOptionPane.showMessageDialog(this,
-                "Transaksi berhasil tanpa diskon.\n" +
-                "Total Bayar: Rp " + totalSetelahDiskon);
+            "Transaksi berhasil tanpa diskon.\n" +
+            "Total Bayar: Rp " + totalSetelahDiskon);
         }
+
 
         modelKeranjang.setRowCount(0);
         lblTotal.setText("Total: Rp 0");
@@ -368,15 +352,7 @@ public class PanelKasir extends javax.swing.JPanel {
     private void txtNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNamaActionPerformed
-    
-    private void loadTotal(){
-        double total = 0;
-        DefaultTableModel modelKeranjang = (DefaultTableModel) tabelKeranjang.getModel();
-        for (int i = 0; i < modelKeranjang.getRowCount(); i++) {
-            total += (double) modelKeranjang.getValueAt(i, 4);
-        }
-    }
-    
+       
     private void hitungTotal(){
         double total = 0;
         DefaultTableModel model = (DefaultTableModel) tabelKeranjang.getModel();
@@ -389,8 +365,6 @@ public class PanelKasir extends javax.swing.JPanel {
     private void loadProduk() {
     dao.ProductDao dao = new dao.ProductDao();
     List<Produk> list = dao.tampilkanSemuaProduk();
-
-
     // Buat model tabel
     javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(
         new Object[]{"ID", "Nama", "Harga"}, 0

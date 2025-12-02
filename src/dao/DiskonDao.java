@@ -8,29 +8,29 @@ import java.util.List;
 
 public class DiskonDao {
 
-    public List<Diskon> getDiskonHariIni() {
-    List<Diskon> list = new ArrayList<>();
-    String sql = "SELECT * FROM diskon WHERE tanggal = CURDATE()";
+    public Diskon getDiskonHariIni() {
+    Diskon diskon = null;
+    String sql = "SELECT * FROM diskon WHERE tanggal = CURDATE() ORDER BY id ASC LIMIT 1";
 
     try (Connection conn = DatabaseConnection.GetConnection();
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(sql)) {
 
-        while (rs.next()) {
-            Diskon d = new Diskon();
-            d.setId(rs.getInt("id"));
-            d.setTanggal(rs.getDate("tanggal"));
-            d.setPersen1(rs.getDouble("persen1"));
-            d.setPersen2(rs.getDouble("persen2"));
-            list.add(d);
+        if (rs.next()) {
+            diskon = new Diskon();
+            diskon.setId(rs.getInt("id"));
+            diskon.setTanggal(rs.getDate("tanggal"));
+            diskon.setPersen1(rs.getDouble("persen1"));
+            diskon.setPersen2(rs.getDouble("persen2"));
         }
 
     } catch (SQLException e) {
         System.out.println("Gagal ambil diskon hari ini: " + e.getMessage());
     }
 
-    return list;
-}
+        return diskon; // bisa null kalau tidak ada diskon hari ini
+    }
+
 
     public void insertDiskon(Diskon d) {
         String sql = "INSERT INTO diskon (tanggal, persen1, persen2) VALUES (?, ?, ?)";

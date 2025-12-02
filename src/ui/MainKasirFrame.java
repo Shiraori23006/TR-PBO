@@ -22,7 +22,7 @@ public class MainKasirFrame extends javax.swing.JFrame {
      */
     public MainKasirFrame() {
         initComponents();
-        
+        showPanel(new PanelKasir());
     }
 
     /**
